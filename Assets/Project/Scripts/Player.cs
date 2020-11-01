@@ -229,10 +229,10 @@ public class Player : MonoBehaviour
 
     private float CheckDownSpeed(float speed)
     {
-        if (world.CheckForVoxel(new Vector3(playerTransform.position.x - playerWidth, playerTransform.position.y + speed, playerTransform.position.z - playerWidth)) ||
-            world.CheckForVoxel(new Vector3(playerTransform.position.x - playerWidth, playerTransform.position.y + speed, playerTransform.position.z + playerWidth)) ||
-            world.CheckForVoxel(new Vector3(playerTransform.position.x + playerWidth, playerTransform.position.y + speed, playerTransform.position.z - playerWidth)) ||
-            world.CheckForVoxel(new Vector3(playerTransform.position.x + playerWidth, playerTransform.position.y + speed, playerTransform.position.z + playerWidth)))
+        if ((world.CheckForVoxel(new Vector3(playerTransform.position.x - playerWidth, playerTransform.position.y + speed, playerTransform.position.z - playerWidth)) && (!LeftBlocked && !BackBlocked)) ||
+            (world.CheckForVoxel(new Vector3(playerTransform.position.x - playerWidth, playerTransform.position.y + speed, playerTransform.position.z + playerWidth)) && (!LeftBlocked && !FrontBlocked)) ||
+            (world.CheckForVoxel(new Vector3(playerTransform.position.x + playerWidth, playerTransform.position.y + speed, playerTransform.position.z - playerWidth)) && (!RightBlocked && !BackBlocked)) ||
+            (world.CheckForVoxel(new Vector3(playerTransform.position.x + playerWidth, playerTransform.position.y + speed, playerTransform.position.z + playerWidth)) && (!RightBlocked && !FrontBlocked)))
         {
             isGrounded = true;
 
@@ -248,10 +248,10 @@ public class Player : MonoBehaviour
 
     private float CheckUpSpeed(float speed)
     {
-        if (world.CheckForVoxel(new Vector3(playerTransform.position.x - playerWidth, playerTransform.position.y + playerHeight + speed, playerTransform.position.z - playerWidth)) ||
-            world.CheckForVoxel(new Vector3(playerTransform.position.x - playerWidth, playerTransform.position.y + playerHeight + speed, playerTransform.position.z + playerWidth)) ||
-            world.CheckForVoxel(new Vector3(playerTransform.position.x + playerWidth, playerTransform.position.y + playerHeight + speed, playerTransform.position.z - playerWidth)) ||
-            world.CheckForVoxel(new Vector3(playerTransform.position.x + playerWidth, playerTransform.position.y + playerHeight + speed, playerTransform.position.z + playerWidth)))
+        if ((world.CheckForVoxel(new Vector3(playerTransform.position.x - playerWidth, playerTransform.position.y + playerHeight + speed, playerTransform.position.z - playerWidth)) && (!LeftBlocked && !BackBlocked)) ||
+            (world.CheckForVoxel(new Vector3(playerTransform.position.x - playerWidth, playerTransform.position.y + playerHeight + speed, playerTransform.position.z + playerWidth)) && (!LeftBlocked && !FrontBlocked)) ||
+            (world.CheckForVoxel(new Vector3(playerTransform.position.x + playerWidth, playerTransform.position.y + playerHeight + speed, playerTransform.position.z - playerWidth)) && (!RightBlocked && !BackBlocked)) ||
+            (world.CheckForVoxel(new Vector3(playerTransform.position.x + playerWidth, playerTransform.position.y + playerHeight + speed, playerTransform.position.z + playerWidth)) && (!RightBlocked && !FrontBlocked)))
         {
             return 0;
         }
