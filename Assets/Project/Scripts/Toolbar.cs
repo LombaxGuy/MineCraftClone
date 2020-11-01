@@ -5,25 +5,26 @@ using UnityEngine.UI;
 
 public class Toolbar : MonoBehaviour
 {
-    private World world;
+    //private World world;
     public Player player;
 
     public RectTransform highlight;
-    public ItemSlot[] itemSlots;
+    public UIItemSlot[] slots;
 
-    private int slotIndex = 0;
+    public int slotIndex = 0;
 
-    private void Start()
+    public void Start()
     {
-        world = GameObject.Find("World").GetComponent<World>();
+        byte index = 1;
 
-        foreach (var slot in itemSlots)
+        foreach (var s in slots)
         {
-            slot.icon.sprite = world.blockTypes[slot.itemID].icon;
-            slot.icon.enabled = true;
+            ItemStack stack = new ItemStack(index, Random.Range(1, 65));
+            ItemSlot slot = new ItemSlot(s, stack);
+            index++;
         }
 
-        player.selectedBlockIndex = itemSlots[slotIndex].itemID;
+
     }
 
     public void Update()
@@ -37,14 +38,13 @@ public class Toolbar : MonoBehaviour
             else
                 slotIndex++;
 
-            if (slotIndex > itemSlots.Length - 1)
+            if (slotIndex > slots.Length - 1)
                 slotIndex = 0;
             else if (slotIndex < 0)
-                slotIndex = itemSlots.Length - 1;
+                slotIndex = slots.Length - 1;
 
             // might be inefficient as it calls .transform on icon
-            highlight.position = itemSlots[slotIndex].icon.transform.position;
-            player.selectedBlockIndex = itemSlots[slotIndex].itemID;
+            highlight.position = slots[slotIndex].slotIcon.transform.position;
         }
     }
 }

@@ -28,8 +28,39 @@ public class World : MonoBehaviour
 
     private Queue<VoxelMod> modifications = new Queue<VoxelMod>();
 
+    private bool inUI = false;
+
+    public GameObject creativeInventoryWindow;
+    public GameObject cursorSlot;
+
     [Header("Debug")]
     public GameObject debugScreen;
+
+    public bool InUI
+    {
+        get => inUI;
+        set
+        {
+            inUI = value;
+
+            if (inUI)
+            {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+
+                creativeInventoryWindow.SetActive(true);
+                cursorSlot.SetActive(true);
+            }
+            else
+            {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+
+                creativeInventoryWindow.SetActive(false);
+                cursorSlot.SetActive(false);
+            }
+        }
+    }
 
     private void Start()
     {

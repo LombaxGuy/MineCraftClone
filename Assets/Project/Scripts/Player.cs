@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 public class Player : MonoBehaviour
@@ -42,7 +43,7 @@ public class Player : MonoBehaviour
     public float checkIncrement = 0.1f;
     public float reach = 8f;
 
-    public byte selectedBlockIndex = 1;
+    public Toolbar toolbar;
 
     public bool FrontBlocked
     {
@@ -102,22 +103,33 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        GetPlayerInput();
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            world.InUI = !world.InUI;
+        }
 
-        PlaceCursorBlock();
+        if (!world.InUI)
+        {
+            GetPlayerInput();
 
-        RotatePlayer();
-        RotateCamera();
+            PlaceCursorBlock();
+
+            RotatePlayer();
+            RotateCamera();
+        }
     }
 
     private void FixedUpdate()
     {
-        CalculateVelocity();
+        if (!world.InUI)
+        {
+            CalculateVelocity();
 
-        if (jumpRequest)
-            Jump();
+            if (jumpRequest)
+                Jump();
 
-        transform.Translate(velocity, Space.World);
+            transform.Translate(velocity, Space.World);
+        }
     }
 
     private void CalculateVelocity()
@@ -192,9 +204,14 @@ public class Player : MonoBehaviour
                 world.GetChunkFromPosition(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
             }
 
+            // place blocks
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
-                world.GetChunkFromPosition(highlightBlock.position).EditVoxel(placeBlock.position, selectedBlockIndex);
+                if (toolbar.slots[toolbar.slotIndex].HasItem)
+                {
+                    world.GetChunkFromPosition(highlightBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
+                    toolbar.slots[toolbar.slotIndex].itemSlot.Take(1);
+                }
             }
         }
     }
