@@ -15,6 +15,11 @@ public static class VoxelData
     public static readonly int textureAtlasSizeInBlocks = 16;
     public static float NormalizedBlockTextureSize { get => 1f / (float)textureAtlasSizeInBlocks; }
 
+    // Lighting values
+    public static float minLightLevel = 0.15f;
+    public static float maxLightLevel = 0.8f;
+    public static float lightFalloff = 0.08f;
+
     public static readonly Vector3[] vertices =
     {
         new Vector3(0.0f, 0.0f, 0.0f), // (0,0,0)

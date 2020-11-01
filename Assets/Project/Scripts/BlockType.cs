@@ -9,7 +9,8 @@ public class BlockType
 {
     public string name;
     public bool isSolid;
-    public bool isTransparent;
+    public bool renderNeighbourFaces;
+    public float transparency;
     public Sprite icon;
 
     [Header("Texture Values")]

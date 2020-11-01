@@ -37,7 +37,7 @@ public class World : MonoBehaviour
     public Color skyDay;
     public Color skyNight;
 
-    [Range(0.9f, 0f)] public float globalLightLevel;
+    [Range(0f, 1f)] public float globalLightLevel;
 
     [Header("Debug")]
     public GameObject debugScreen;
@@ -72,6 +72,9 @@ public class World : MonoBehaviour
     {
         Random.InitState(seed);
 
+        Shader.SetGlobalFloat("minGlobalLightLevel", VoxelData.minLightLevel);
+        Shader.SetGlobalFloat("maxGlobalLightLevel", VoxelData.maxLightLevel);
+
         spawnPos = new Vector3(VoxelData.WorldSizeInVoxels / 2, VoxelData.chunkHeight - 50, VoxelData.WorldSizeInVoxels / 2);
         player.position = spawnPos;
 
@@ -85,7 +88,7 @@ public class World : MonoBehaviour
         playerChunkCoordinate = GetChunkCoordinateFromPosition(player.position);
 
         Shader.SetGlobalFloat("GlobalLightLevel", globalLightLevel);
-        Camera.main.backgroundColor = Color.Lerp(skyDay, skyNight, globalLightLevel);
+        Camera.main.backgroundColor = Color.Lerp(skyNight, skyDay, globalLightLevel);
 
         if (!playerChunkCoordinate.Equals(playerLastChunkCoordinate))
         {
@@ -172,27 +175,25 @@ public class World : MonoBehaviour
         ChunkCoordinate thisChunk = new ChunkCoordinate(position);
         
         if (!IsVoxelInWorld(position))
-        //if (!IsChunkInWorld(thisChunk) || position.y < 0 || position.y > VoxelData.chunkHeight)
             return false;
 
         if (chunks[thisChunk.x, thisChunk.z] != null && chunks[thisChunk.x, thisChunk.z].isVoxelMapPopulated)
-            return blockTypes[chunks[thisChunk.x, thisChunk.z].GetVoxelFromPosition(position)].isSolid;
+            return blockTypes[chunks[thisChunk.x, thisChunk.z].GetVoxelFromPosition(position).id].isSolid;
 
         return blockTypes[GetVoxel(position)].isSolid;
     }
 
-    public bool CheckIfVoxelTransparent(Vector3 position)
+    public VoxelState GetVoxelState (Vector3 position)
     {
         ChunkCoordinate thisChunk = new ChunkCoordinate(position);
 
         if (!IsVoxelInWorld(position))
-            //if (!IsChunkInWorld(thisChunk) || position.y < 0 || position.y > VoxelData.chunkHeight)
-            return false;
+            return null;
 
         if (chunks[thisChunk.x, thisChunk.z] != null && chunks[thisChunk.x, thisChunk.z].isVoxelMapPopulated)
-            return blockTypes[chunks[thisChunk.x, thisChunk.z].GetVoxelFromPosition(position)].isTransparent;
+            return chunks[thisChunk.x, thisChunk.z].GetVoxelFromPosition(position);
 
-        return blockTypes[GetVoxel(position)].isTransparent;
+        return new VoxelState(GetVoxel(position));
     }
 
     private void GenerateWorld()
