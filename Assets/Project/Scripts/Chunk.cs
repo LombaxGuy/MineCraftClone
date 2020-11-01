@@ -14,8 +14,8 @@ public class Chunk
     private int vertexIndex = 0;
     private List<Vector3> verticies = new List<Vector3>();
     private List<int> triangles = new List<int>();
-    private List<int> transparentTriangles = new List<int>();
     private List<Vector2> uvs = new List<Vector2>();
+    private List<Color> colors = new List<Color>();
 
     public byte[,,] voxelMap = new byte[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
 
@@ -116,8 +116,8 @@ public class Chunk
         vertexIndex = 0;
         verticies.Clear();
         triangles.Clear();
-        transparentTriangles.Clear();
         uvs.Clear();
+        colors.Clear();
     }
 
     private bool IsVoxelInChunk(int x, int y, int z)
@@ -213,6 +213,34 @@ public class Chunk
         // adding uvs to the uvs list
         AddTexture(world.blockTypes[blockID].GetTextureID(faceIndex));
 
+        // setting local light level of face
+        float lightLevel;
+
+        int yPos = (int)position.y + 1;
+
+        bool inShade = false;
+
+        while (yPos < VoxelData.chunkHeight)
+        {
+            if(voxelMap[(int)position.x, yPos, (int)position.z] != 0)
+            {
+                inShade = true;
+                break;
+            }
+
+            yPos++;
+        }
+
+        if (inShade)
+            lightLevel = 0.4f;
+        else
+            lightLevel = 0;
+
+        colors.Add(new Color(0, 0, 0, lightLevel));
+        colors.Add(new Color(0, 0, 0, lightLevel));
+        colors.Add(new Color(0, 0, 0, lightLevel));
+        colors.Add(new Color(0, 0, 0, lightLevel));
+
         triangles.Add(vertexIndex);
         triangles.Add(vertexIndex + 1);
         triangles.Add(vertexIndex + 2);
@@ -230,11 +258,11 @@ public class Chunk
 
         mesh.vertices = verticies.ToArray();
 
-        mesh.subMeshCount = 2;
-        mesh.SetTriangles(triangles.ToArray(), 0);
-        mesh.SetTriangles(transparentTriangles.ToArray(), 1);
+        mesh.triangles = triangles.ToArray();
 
         mesh.uv = uvs.ToArray();
+
+        mesh.colors = colors.ToArray();
 
         mesh.RecalculateNormals();
 

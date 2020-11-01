@@ -33,6 +33,12 @@ public class World : MonoBehaviour
     public GameObject creativeInventoryWindow;
     public GameObject cursorSlot;
 
+    [Header("Lighting")]
+    public Color skyDay;
+    public Color skyNight;
+
+    [Range(0.9f, 0f)] public float globalLightLevel;
+
     [Header("Debug")]
     public GameObject debugScreen;
 
@@ -77,6 +83,9 @@ public class World : MonoBehaviour
     private void Update()
     {
         playerChunkCoordinate = GetChunkCoordinateFromPosition(player.position);
+
+        Shader.SetGlobalFloat("GlobalLightLevel", globalLightLevel);
+        Camera.main.backgroundColor = Color.Lerp(skyDay, skyNight, globalLightLevel);
 
         if (!playerChunkCoordinate.Equals(playerLastChunkCoordinate))
         {
