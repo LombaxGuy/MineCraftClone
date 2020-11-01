@@ -16,18 +16,10 @@ MonoBehaviour:
   solidGroundHeight: 50
   terrainHeight: 30
   terrainScale: 0.25
-  lodes:
-  - nodeName: Caves
-    blockID: 0
-    minHeight: 1
-    maxHeight: 255
-    scale: 1
-    threshold: 0.7
-    noiseOffset: 0
-  - nodeName: Dirt
-    blockID: 3
-    minHeight: 1
-    maxHeight: 255
-    scale: 0.1
-    threshold: 0.5
-    noiseOffset: 500
+  treeZoneScale: 1.3
+  treeZoneThreshold: 0.6
+  treePlacementScale: 15
+  treePlacementThreshold: 0.8
+  maxTreeHeight: 7
+  minTreeHeight: 4
+  lodes: []
