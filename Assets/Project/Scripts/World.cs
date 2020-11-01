@@ -12,7 +12,6 @@ public class World : MonoBehaviour
     public Vector3 spawnPos;
 
     public Material material;
-    public Material transparentMaterial;
     public BlockType[] blockTypes;
 
     private Chunk[,] chunks = new Chunk[VoxelData.worldSizeInChunks, VoxelData.worldSizeInChunks];

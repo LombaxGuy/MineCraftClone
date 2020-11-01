@@ -15,7 +15,6 @@ public class Chunk
     private List<Vector3> verticies = new List<Vector3>();
     private List<int> triangles = new List<int>();
     private List<int> transparentTriangles = new List<int>();
-    private Material[] materials = new Material[2];
     private List<Vector2> uvs = new List<Vector2>();
 
     public byte[,,] voxelMap = new byte[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
@@ -59,9 +58,7 @@ public class Chunk
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
 
-        materials[0] = world.material;
-        materials[1] = world.transparentMaterial;
-        meshRenderer.materials = materials;
+        meshRenderer.material = world.material;
 
         chunkObject.transform.SetParent(world.transform);
         chunkObject.transform.position = new Vector3(coordinate.x * VoxelData.chunkWidth, 0, coordinate.z * VoxelData.chunkWidth);
@@ -104,7 +101,7 @@ public class Chunk
                 for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
                     if (world.blockTypes[voxelMap[x, y, z]].isSolid)
-                    { 
+                    {
                         UpdateMeshData(new Vector3(x, y, z));
                     }
                 }
@@ -216,26 +213,12 @@ public class Chunk
         // adding uvs to the uvs list
         AddTexture(world.blockTypes[blockID].GetTextureID(faceIndex));
 
-        if (isTransparent)
-        {
-            // adding triangles to the transparent triangles list
-            transparentTriangles.Add(vertexIndex);
-            transparentTriangles.Add(vertexIndex + 1);
-            transparentTriangles.Add(vertexIndex + 2);
-            transparentTriangles.Add(vertexIndex + 2);
-            transparentTriangles.Add(vertexIndex + 3);
-            transparentTriangles.Add(vertexIndex);
-        }
-        else
-        {
-            // adding triangles to the triangles list
-            triangles.Add(vertexIndex);
-            triangles.Add(vertexIndex + 1);
-            triangles.Add(vertexIndex + 2);
-            triangles.Add(vertexIndex + 2);
-            triangles.Add(vertexIndex + 3);
-            triangles.Add(vertexIndex);
-        }
+        triangles.Add(vertexIndex);
+        triangles.Add(vertexIndex + 1);
+        triangles.Add(vertexIndex + 2);
+        triangles.Add(vertexIndex + 2);
+        triangles.Add(vertexIndex + 3);
+        triangles.Add(vertexIndex);
 
         // increment vertex index by 4
         vertexIndex += 4;
