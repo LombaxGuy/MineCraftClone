@@ -4,8 +4,10 @@ using UnityEngine;
 
 public static class Structure
 {
-    public static void MakeTree(int minTrunkHeight, int maxTrunkHeight, Vector3 position, Queue<VoxelMod> queue)
+    public static Queue<VoxelMod> MakeTree(int minTrunkHeight, int maxTrunkHeight, Vector3 position)
     {
+        Queue<VoxelMod> queue = new Queue<VoxelMod>();
+
         float rawTrunkHeight = Mathf.Lerp(minTrunkHeight, maxTrunkHeight, Noise.Get2DPerlin(new Vector2(position.x, position.z), 500, 3f));
 
         int trunkHeight = (int)rawTrunkHeight;
@@ -57,6 +59,6 @@ public static class Structure
             }
         }
 
-
+        return queue;
     }
 }

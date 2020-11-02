@@ -409,6 +409,7 @@ MonoBehaviour:
     bottomTexture: 16
   creativeInventoryWindow: {fileID: 554369774}
   cursorSlot: {fileID: 1779428473}
+  enableThreading: 1
   skyDay: {r: 0, g: 0.69152164, b: 1, a: 0}
   skyNight: {r: 0, g: 0.02010966, b: 0.26415092, a: 0}
   globalLightLevel: 1

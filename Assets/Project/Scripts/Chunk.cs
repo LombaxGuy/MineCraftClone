@@ -25,7 +25,7 @@ public class Chunk
 
     private bool isActive;
 
-    public bool isVoxelMapPopulated = false;
+    private bool isVoxelMapPopulated = false;
 
     public bool IsActive
     {
@@ -38,17 +38,15 @@ public class Chunk
                 chunkObject.SetActive(value);
         }
     }
-    public Vector3 Position { get => chunkObject.transform.position; }
 
-    public Chunk(ChunkCoordinate coordinate, World world, bool generateOnLoad)
+    public Vector3 ChunkPosition { get; private set; }
+
+    public bool IsEditable { get => isVoxelMapPopulated; }
+
+    public Chunk(ChunkCoordinate coordinate, World world)
     {
         this.coordinate = coordinate;
         this.world = world;
-
-        isActive = true;
-
-        if (generateOnLoad)
-            Initialize();
     }
 
     public void Initialize()
@@ -62,9 +60,9 @@ public class Chunk
 
         chunkObject.transform.SetParent(world.transform);
         chunkObject.transform.position = new Vector3(coordinate.x * VoxelData.chunkWidth, 0, coordinate.z * VoxelData.chunkWidth);
+        ChunkPosition = chunkObject.transform.position;
 
         PopulateVoxelMap();
-        UpdateChunk();
     }
 
     private void PopulateVoxelMap()
@@ -75,12 +73,17 @@ public class Chunk
             {
                 for (int z = 0; z < VoxelData.chunkWidth; z++)
                 {
-                    voxelMap[x, y, z] = new VoxelState(world.GetVoxel(new Vector3(x, y, z) + Position));
+                    voxelMap[x, y, z] = new VoxelState(world.GetVoxel(new Vector3(x, y, z) + ChunkPosition));
                 }
             }
         }
 
         isVoxelMapPopulated = true;
+
+        lock (world.chunkUpdateThreadLock)
+        {
+            world.chunksToUpdate.Add(this);
+        }
     }
 
     public void UpdateChunk()
@@ -88,7 +91,7 @@ public class Chunk
         while (modifications.Count > 0)
         {
             VoxelMod v = modifications.Dequeue();
-            Vector3 pos = v.position - Position;
+            Vector3 pos = v.position - ChunkPosition;
             voxelMap[(int)pos.x, (int)pos.y, (int)pos.z].id = v.id;
         }
 
@@ -110,7 +113,7 @@ public class Chunk
             }
         }
 
-        CreateMesh();
+        world.chunksToDraw.Enqueue(this);
     }
 
     private void CalculateLight()
@@ -198,21 +201,24 @@ public class Chunk
 
         voxelMap[xCheck, yCheck, zCheck].id = newID;
 
-        // update surrounding chunks
-        UpdateSurrondingVoxels(new Vector3(xCheck, yCheck, zCheck));
+        lock (world.chunkUpdateThreadLock)
+        {
+            world.chunksToUpdate.Insert(0, this);
 
-        UpdateChunk();
+            // update surrounding chunks
+            UpdateSurrondingVoxels(new Vector3(xCheck, yCheck, zCheck));
+        }
     }
 
     private void UpdateSurrondingVoxels(Vector3 thisVoxel)
     {
         for (int i = 0; i < 6; i++)
         {
-            Vector3 currentVoxel = thisVoxel + VoxelData.faceChecks[i];
+            Vector3 neighbourVoxelPosition = thisVoxel + VoxelData.faceChecks[i];
 
-            if (!IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
+            if (!IsVoxelInChunk((int)neighbourVoxelPosition.x, (int)neighbourVoxelPosition.y, (int)neighbourVoxelPosition.z))
             {
-                world.GetChunkFromPosition(currentVoxel + Position).UpdateChunk();
+                world.chunksToUpdate.Insert(0, world.GetChunkFromPosition(neighbourVoxelPosition + ChunkPosition));
             }
         }
     }
@@ -224,7 +230,7 @@ public class Chunk
         int z = Mathf.FloorToInt(position.z);
 
         if (!IsVoxelInChunk(x, y, z))
-            return world.GetVoxelState(position + Position);
+            return world.GetVoxelState(position + ChunkPosition);
 
         return voxelMap[x, y, z];
     }
@@ -237,8 +243,8 @@ public class Chunk
         int zCheck = Mathf.FloorToInt(position.z);
 
         // subtract the position of the chunk object to get the relative position
-        xCheck -= Mathf.FloorToInt(chunkObject.transform.position.x);
-        zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
+        xCheck -= Mathf.FloorToInt(ChunkPosition.x);
+        zCheck -= Mathf.FloorToInt(ChunkPosition.z);
 
         // return the block at the the calculated position
         return voxelMap[xCheck, yCheck, zCheck];
@@ -294,16 +300,13 @@ public class Chunk
         vertexIndex += 4;
     }
 
-    private void CreateMesh()
+    public void CreateMesh()
     {
         Mesh mesh = new Mesh();
 
         mesh.vertices = verticies.ToArray();
-
         mesh.triangles = triangles.ToArray();
-
         mesh.uv = uvs.ToArray();
-
         mesh.colors = colors.ToArray();
 
         mesh.RecalculateNormals();
