@@ -5,9 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
-    [Header("Input settings")]
-    public float mouseSensitivity = 1f;
-
     [Header("Settings")]
     public float gravity = -10f;
 
@@ -280,12 +277,12 @@ public class Player : MonoBehaviour
 
     private void RotatePlayer()
     {
-        playerTransform.Rotate(Vector3.up * mouseHorizontal * mouseSensitivity);
+        playerTransform.Rotate(Vector3.up * mouseHorizontal * world.settings.mouseSensitivity);
     }
 
     private void RotateCamera()
     {
-        yRotation += mouseVertical * mouseSensitivity;
+        yRotation += mouseVertical * world.settings.mouseSensitivity;
 
         yRotation = Mathf.Clamp(yRotation, -90, 90);
 

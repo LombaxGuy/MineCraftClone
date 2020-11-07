@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.IO;
+using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,8 @@ using UnityEngine.Rendering;
 
 public class World : MonoBehaviour
 {
+    public Settings settings;
+
     public int seed;
     public BiomeAttributes biome;
 
@@ -33,9 +36,6 @@ public class World : MonoBehaviour
 
     public GameObject creativeInventoryWindow;
     public GameObject cursorSlot;
-
-    [Header("Threading")]
-    public bool enableThreading = true;
 
     private Thread chunkUpdateThread;
     public object chunkUpdateThreadLock = new object();
@@ -77,7 +77,7 @@ public class World : MonoBehaviour
 
     private void OnDisable()
     {
-        if (enableThreading)
+        if (settings.enableThreading)
         {
             chunkUpdateThread.Abort();
         }
@@ -85,12 +85,18 @@ public class World : MonoBehaviour
 
     private void Start()
     {
+        //string jsonExport = JsonUtility.ToJson(settings);
+        //File.WriteAllText(Application.dataPath + "/settings.cfg", jsonExport);
+
+        //string jsonImport = File.ReadAllText(Application.dataPath + "/settings.cfg");
+        //settings = JsonUtility.FromJson<Settings>(jsonImport);
+
         Random.InitState(seed);
 
         Shader.SetGlobalFloat("minGlobalLightLevel", VoxelData.minLightLevel);
         Shader.SetGlobalFloat("maxGlobalLightLevel", VoxelData.maxLightLevel);
 
-        if (enableThreading)
+        if (settings.enableThreading)
         {
             chunkUpdateThread = new Thread(new ThreadStart(ThreadedUpdate));
             chunkUpdateThread.Start();
@@ -127,7 +133,7 @@ public class World : MonoBehaviour
         }
 
         // if threading is not enabled we run chunk updates on this thread
-        if (!enableThreading)
+        if (!settings.enableThreading)
         {
             if (!applyingModifications)
                 ApplyModifications();
@@ -147,9 +153,9 @@ public class World : MonoBehaviour
     {
         int center = (VoxelData.worldSizeInChunks / 2);
 
-        for (int x = center - VoxelData.viewDistanceInChunks; x < center + VoxelData.viewDistanceInChunks; x++)
+        for (int x = center - settings.viewDistance; x < center + settings.viewDistance; x++)
         {
-            for (int z = center - VoxelData.viewDistanceInChunks; z < center + VoxelData.viewDistanceInChunks; z++)
+            for (int z = center - settings.viewDistance; z < center + settings.viewDistance; z++)
             {
                 ChunkCoordinate newChunk = new ChunkCoordinate(x, z);
 
@@ -242,9 +248,9 @@ public class World : MonoBehaviour
         activeChunks.Clear();
 
         // loop through all chunks within view distance
-        for (int x = coordinate.x - VoxelData.viewDistanceInChunks; x < coordinate.x + VoxelData.viewDistanceInChunks; x++)
+        for (int x = coordinate.x - settings.viewDistance; x < coordinate.x + settings.viewDistance; x++)
         {
-            for (int z = coordinate.z - VoxelData.viewDistanceInChunks; z < coordinate.z + VoxelData.viewDistanceInChunks; z++)
+            for (int z = coordinate.z - settings.viewDistance; z < coordinate.z + settings.viewDistance; z++)
             {
                 ChunkCoordinate currentCoord = new ChunkCoordinate(x, z);
 

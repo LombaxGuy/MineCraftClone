@@ -269,6 +269,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15e0b80a2fc72c343a74c2d460e68a10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  settings:
+    viewDistance: 4
+    enableThreading: 0
+    mouseSensitivity: 1
   seed: 0
   biome: {fileID: 11400000, guid: 11a177ab630afe848aa07f235f543230, type: 2}
   player: {fileID: 1753862793}
@@ -409,7 +413,6 @@ MonoBehaviour:
     bottomTexture: 16
   creativeInventoryWindow: {fileID: 554369774}
   cursorSlot: {fileID: 1779428473}
-  enableThreading: 1
   skyDay: {r: 0, g: 0.69152164, b: 1, a: 0}
   skyNight: {r: 0, g: 0.02010966, b: 0.26415092, a: 0}
   globalLightLevel: 1
@@ -1898,7 +1901,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8366d555fc6e2ad48b7b293c80113468, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 1
   gravity: -10
   moveSpeed: 3
   sprintSpeed: 6
