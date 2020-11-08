@@ -16,6 +16,7 @@ public class Chunk
     private List<int> triangles = new List<int>();
     private List<Vector2> uvs = new List<Vector2>();
     private List<Color> colors = new List<Color>();
+    private List<Vector3> normals = new List<Vector3>();
 
     public VoxelState[,,] voxelMap = new VoxelState[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
 
@@ -178,6 +179,7 @@ public class Chunk
         triangles.Clear();
         uvs.Clear();
         colors.Clear();
+        normals.Clear();
     }
 
     private bool IsVoxelInChunk(int x, int y, int z)
@@ -278,6 +280,11 @@ public class Chunk
         verticies.Add(position + VoxelData.vertices[VoxelData.triangles[faceIndex, 2]]);
         verticies.Add(position + VoxelData.vertices[VoxelData.triangles[faceIndex, 3]]);
 
+        normals.Add(VoxelData.faceChecks[faceIndex]);
+        normals.Add(VoxelData.faceChecks[faceIndex]);
+        normals.Add(VoxelData.faceChecks[faceIndex]);
+        normals.Add(VoxelData.faceChecks[faceIndex]);
+
         // adding uvs to the uvs list
         AddTexture(world.blockTypes[blockID].GetTextureID(faceIndex));
 
@@ -308,8 +315,7 @@ public class Chunk
         mesh.triangles = triangles.ToArray();
         mesh.uv = uvs.ToArray();
         mesh.colors = colors.ToArray();
-
-        mesh.RecalculateNormals();
+        mesh.normals = normals.ToArray();
 
         meshFilter.mesh = mesh;
     }

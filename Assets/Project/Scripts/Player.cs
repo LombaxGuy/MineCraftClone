@@ -94,8 +94,7 @@ public class Player : MonoBehaviour
 
         world = GameObject.Find("World").GetComponent<World>();
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        world.InUI = false;
     }
 
     private void Update()
@@ -177,6 +176,9 @@ public class Player : MonoBehaviour
 
     private void GetPlayerInput()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
 

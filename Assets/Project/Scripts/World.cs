@@ -102,6 +102,8 @@ public class World : MonoBehaviour
             chunkUpdateThread.Start();
         }
 
+        SetGlobalLightValue();
+
         spawnPos = new Vector3(VoxelData.WorldSizeInVoxels / 2, VoxelData.chunkHeight - 50, VoxelData.WorldSizeInVoxels / 2);
         player.position = spawnPos;
 
@@ -111,12 +113,15 @@ public class World : MonoBehaviour
 
     }
 
+    public void SetGlobalLightValue()
+    {
+        Shader.SetGlobalFloat("GlobalLightLevel", globalLightLevel);
+        Camera.main.backgroundColor = Color.Lerp(skyNight, skyDay, globalLightLevel);
+    }
+
     private void Update()
     {
         playerChunkCoordinate = GetChunkCoordinateFromPosition(player.position);
-
-        Shader.SetGlobalFloat("GlobalLightLevel", globalLightLevel);
-        Camera.main.backgroundColor = Color.Lerp(skyNight, skyDay, globalLightLevel);
 
         if (!playerChunkCoordinate.Equals(playerLastChunkCoordinate))
         {
@@ -187,7 +192,10 @@ public class World : MonoBehaviour
                 if (chunksToUpdate[index].IsEditable)
                 {
                     chunksToUpdate[index].UpdateChunk();
-                    activeChunks.Add(chunksToUpdate[index].coordinate);
+
+                    if (!activeChunks.Contains(chunksToUpdate[index].coordinate))
+                        activeChunks.Add(chunksToUpdate[index].coordinate);
+
                     chunksToUpdate.RemoveAt(index);
                     updated = true;
                 }
