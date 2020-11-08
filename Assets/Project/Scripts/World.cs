@@ -4,13 +4,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEditor.Experimental.GraphView;
 
 public class World : MonoBehaviour
 {
     public Settings settings;
 
     public int seed;
-    public BiomeAttributes biome;
+    public BiomeAttributes[] biomes;
 
     public Transform player;
     public Vector3 spawnPos;
@@ -311,17 +312,51 @@ public class World : MonoBehaviour
         if (y == 0)
             return 1;
 
+        // biome pass (choosing biome for this block)
+        int solidGroundHeight = 42;
+
+        float sumOfHeigts = 0;
+        int count = 0;
+        float strongestWeight = 0;
+        int strongesBiomeIndex = 0;
+
+        for (int i = 0; i < biomes.Length; i++)
+        {
+            float weight = Noise.Get2DPerlin(new Vector2(position.x, position.z), biomes[i].offset, biomes[i].scale);
+
+            // find stronges weight
+            if (weight > strongestWeight)
+            {
+                strongestWeight = weight;
+                strongesBiomeIndex = i;
+            }
+
+            float height = biomes[i].terrainHeight * Noise.Get2DPerlin(new Vector2(position.x, position.z), biomes[i].terrainHeight, biomes[i].terrainScale) * weight;
+
+            if (height > 0)
+            {
+                sumOfHeigts += height;
+                count++;
+            }
+        }
+
+        BiomeAttributes biome = biomes[strongesBiomeIndex];
+
+        sumOfHeigts /= count;
+
+        int terrainHeight = Mathf.FloorToInt(sumOfHeigts + solidGroundHeight);
+
         // first terrain pass (basic terrain shape)
 
-        int terrainHeight = Mathf.FloorToInt(Noise.Get2DPerlin(new Vector2(position.x, position.z), 0, biome.terrainScale) * biome.terrainHeight) + biome.solidGroundHeight;
+        //int terrainHeight = Mathf.FloorToInt(Noise.Get2DPerlin(new Vector2(position.x, position.z), 0, biome.terrainScale) * biome.terrainHeight) + solidGroundHeight;
         byte voxelValue = 0;
 
         // if at top layer of terrain, return 4 (grass block)
         if (y == terrainHeight)
-            voxelValue = 4;
+            voxelValue = biome.surfaceBlock;
         // if less than 4 from top layer, retrun 3 (dirt block)
         else if (y < terrainHeight && y > terrainHeight - 4)
-            voxelValue = 3;
+            voxelValue = biome.subSurfaceBlock;
         // if above terrain, return 0 (air block)
         else if (y > terrainHeight)
             return 0;
@@ -345,13 +380,13 @@ public class World : MonoBehaviour
 
         // foliage pass (Trees)
 
-        if (y == terrainHeight)
+        if (y == terrainHeight && biome.placeMajorFlora)
         {
-            if (Noise.Get2DPerlin(new Vector2(position.x, position.z), 0, biome.treeZoneScale) > biome.treeZoneThreshold)
+            if (Noise.Get2DPerlin(new Vector2(position.x, position.z), 0, biome.majorFloraZoneScale) > biome.majorFloraZoneThreshold)
             {
-                if (Noise.Get2DPerlin(new Vector2(position.x, position.z), 250, biome.treePlacementScale) > biome.treePlacementThreshold)
+                if (Noise.Get2DPerlin(new Vector2(position.x, position.z), 250, biome.majorFloraPlacementScale) > biome.majorFloraPlacementThreshold)
                 {
-                    modifications.Enqueue(Structure.MakeTree(biome.minTreeHeight, biome.maxTreeHeight, position));
+                    modifications.Enqueue(Structure.GenerateMajorFlora(biome.majorFaunaIndex, biome.minMajorFloraHeight, biome.maxMajorFloraHeight, position));
                 }
             }
         }

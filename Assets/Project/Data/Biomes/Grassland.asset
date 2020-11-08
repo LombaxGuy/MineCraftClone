@@ -10,16 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 12690f5420a370f44a455908689cf00e, type: 3}
-  m_Name: Default
+  m_Name: Grassland
   m_EditorClassIdentifier: 
-  biomeName: Default
-  solidGroundHeight: 50
-  terrainHeight: 30
-  terrainScale: 0.25
-  treeZoneScale: 1.3
-  treeZoneThreshold: 0.6
-  treePlacementScale: 15
-  treePlacementThreshold: 0.8
-  maxTreeHeight: 7
-  minTreeHeight: 4
+  biomeName: Grassland
+  offset: 1234
+  scale: 0.042
+  terrainHeight: 22
+  terrainScale: 0.15
+  surfaceBlock: 4
+  subSurfaceBlock: 3
+  placeMajorFlora: 1
+  majorFaunaIndex: 0
+  majorFloraZoneScale: 1.3
+  majorFloraZoneThreshold: 0.6
+  majorFloraPlacementScale: 15
+  majorFloraPlacementThreshold: 0.8
+  maxMajorFloraHeight: 7
+  minMajorFloraHeight: 4
   lodes: []

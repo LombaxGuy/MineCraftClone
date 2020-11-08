@@ -4,6 +4,41 @@ using UnityEngine;
 
 public static class Structure
 {
+    public static Queue<VoxelMod> GenerateMajorFlora(int index, int minTrunkHeight, int maxTrunkHeight, Vector3 position)
+    {
+        switch (index)
+        {
+            case 0:
+                return MakeTree(minTrunkHeight, maxTrunkHeight, position);
+            case 1:
+                return MakeCactus(minTrunkHeight, maxTrunkHeight, position);
+            default:
+                return new Queue<VoxelMod>();
+        }
+    }
+
+    public static Queue<VoxelMod> MakeCactus(int minTrunkHeight, int maxTrunkHeight, Vector3 position)
+    {
+        Queue<VoxelMod> queue = new Queue<VoxelMod>();
+
+        float rawTrunkHeight = Mathf.Lerp(minTrunkHeight, maxTrunkHeight, Noise.Get2DPerlin(new Vector2(position.x, position.z), 1000, 3f));
+
+        int trunkHeight = (int)rawTrunkHeight;
+
+        if (trunkHeight < minTrunkHeight)
+            trunkHeight = minTrunkHeight;
+
+        // create the trunk
+        for (int i = 1; i < trunkHeight; i++)
+        {
+            queue.Enqueue(new VoxelMod(new Vector3(position.x, position.y + i, position.z), 12));
+        }
+
+        queue.Enqueue(new VoxelMod(new Vector3(position.x, position.y + trunkHeight, position.z), 13));
+
+        return queue;
+    }
+
     public static Queue<VoxelMod> MakeTree(int minTrunkHeight, int maxTrunkHeight, Vector3 position)
     {
         Queue<VoxelMod> queue = new Queue<VoxelMod>();

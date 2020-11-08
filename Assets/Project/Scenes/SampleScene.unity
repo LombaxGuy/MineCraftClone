@@ -270,11 +270,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
-    viewDistance: 4
-    enableThreading: 0
+    viewDistance: 15
+    enableThreading: 1
     mouseSensitivity: 1
   seed: 0
-  biome: {fileID: 11400000, guid: 11a177ab630afe848aa07f235f543230, type: 2}
+  biomes:
+  - {fileID: 11400000, guid: 11a177ab630afe848aa07f235f543230, type: 2}
+  - {fileID: 11400000, guid: b87f46164b906e843b56ca74f44a5d3f, type: 2}
   player: {fileID: 1753862793}
   spawnPos: {x: 0, y: 0, z: 0}
   material: {fileID: 2100000, guid: 3def9b205560f0e4ea2921aa5262e7fd, type: 2}
@@ -411,6 +413,28 @@ MonoBehaviour:
     rightTexture: 16
     topTexture: 16
     bottomTexture: 16
+  - name: Cactus
+    isSolid: 1
+    renderNeighbourFaces: 0
+    transparency: 0
+    icon: {fileID: -1867609910350370242, guid: 23a00726d8a70924c8050a6bbf6c492c, type: 3}
+    frontTexture: 18
+    backTexture: 18
+    leftTexture: 18
+    rightTexture: 18
+    topTexture: 19
+    bottomTexture: 19
+  - name: CactusTop
+    isSolid: 1
+    renderNeighbourFaces: 0
+    transparency: 0
+    icon: {fileID: -1867609910350370242, guid: 23a00726d8a70924c8050a6bbf6c492c, type: 3}
+    frontTexture: 18
+    backTexture: 18
+    leftTexture: 18
+    rightTexture: 18
+    topTexture: 17
+    bottomTexture: 19
   creativeInventoryWindow: {fileID: 554369774}
   cursorSlot: {fileID: 1779428473}
   skyDay: {r: 0, g: 0.69152164, b: 1, a: 0}
