@@ -270,7 +270,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
-    viewDistance: 15
+    viewDistance: 4
     enableThreading: 1
     mouseSensitivity: 1
   seed: 0
