@@ -10,7 +10,7 @@ public class World : MonoBehaviour
 {
     public Settings settings;
 
-    public int seed;
+    //public int seed;
     public BiomeAttributes[] biomes;
 
     public Transform player;
@@ -86,13 +86,15 @@ public class World : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log(GetType().Name + ": Generating world with seed: " + VoxelData.seed);
+
         //string jsonExport = JsonUtility.ToJson(settings);
         //File.WriteAllText(Application.dataPath + "/settings.cfg", jsonExport);
 
         //string jsonImport = File.ReadAllText(Application.dataPath + "/settings.cfg");
         //settings = JsonUtility.FromJson<Settings>(jsonImport);
 
-        Random.InitState(seed);
+        Random.InitState(VoxelData.seed);
 
         Shader.SetGlobalFloat("minGlobalLightLevel", VoxelData.minLightLevel);
         Shader.SetGlobalFloat("maxGlobalLightLevel", VoxelData.maxLightLevel);

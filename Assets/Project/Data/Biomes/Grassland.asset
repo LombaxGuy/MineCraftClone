@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   biomeName: Grassland
   offset: 1234
-  scale: 0.042
+  scale: 0.3
   terrainHeight: 22
   terrainScale: 0.15
   surfaceBlock: 4

@@ -6,9 +6,9 @@ using UnityEngine;
 public class Settings
 {
     [Header("Performance")]
-    public int viewDistance;
-    public bool enableThreading;
+    public int viewDistance = 8;
+    public bool enableThreading = true;
 
     [Header("Input")]
-    [Range(0.1f, 10f)] public float mouseSensitivity;
+    [Range(0.1f, 10f)] public float mouseSensitivity = 1;
 }

@@ -10,7 +10,7 @@ public static class VoxelData
     public static readonly int worldSizeInChunks = 100;
     public static int WorldSizeInVoxels { get => worldSizeInChunks * chunkWidth; }
 
-    //public static readonly int viewDistanceInChunks = 5;
+    public static int seed;
 
     public static readonly int textureAtlasSizeInBlocks = 16;
     public static float NormalizedBlockTextureSize { get => 1f / (float)textureAtlasSizeInBlocks; }
